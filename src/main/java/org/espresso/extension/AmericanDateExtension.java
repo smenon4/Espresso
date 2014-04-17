@@ -15,26 +15,43 @@
  */
 package org.espresso.extension;
 
+import static java.util.Arrays.asList;
+
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Hanldes american style date format
+ * 
  * @author <a href="mailto:antenangeli@yahoo.com">Alberto Antenangeli</a>
  * */
-public class AmericanDateExtension
-        implements DateExtension {
-    public static final AmericanDateExtension AMERICAN_DATE_EXTENSION = new AmericanDateExtension();
+public class AmericanDateExtension implements DateExtension {
 
-    @Override
-    @SqlExtension
-    public Date toDate(final String dateString)
-            throws SQLException {
-        try {
-            return null == dateString ? null : DateFormat.toDateAmericanFormat(dateString);
-        } catch (final ParseException e) {
-            throw new SQLException(e);
-        }
-    }
+	private static final List<String> FORMATS = asList("d MMM y", "d-MMM-y",
+			"d/MMM/y", "MMM d yy", "MMM-d-yy", "MMM/d/yy");
+	public static final AmericanDateExtension AMERICAN_DATE_EXTENSION = new AmericanDateExtension();
+
+	@SqlExtension
+	public Date toDate(final String dateString) throws SQLException {
+		try {
+			return null == dateString ? null : DateFormat
+					.toDateAmericanFormat(dateString);
+		} catch (final Exception e) {
+			return fallback(dateString);
+		}
+	}
+
+	private static Date fallback(final String dateString) throws SQLException {
+		for (final String format : FORMATS) {
+			try {
+				return new SimpleDateFormat(format).parse(dateString);
+			} catch (ParseException e) {
+			}
+		}
+
+		throw new SQLException();
+	}
 }

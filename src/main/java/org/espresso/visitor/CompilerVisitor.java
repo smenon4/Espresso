@@ -206,6 +206,11 @@ public class CompilerVisitor<E> extends SqlNodeVisitor<E> {
     public void visit(final SqlInExpression node) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
+    
+    @Override
+    public void visit(final SqlCharacter node) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
 
     @Override
     public void visit(final SqlIsNullExpression node) throws SQLException {

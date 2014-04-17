@@ -25,48 +25,48 @@ import java.util.Date;
  */
 public class TestDeal
         implements Cloneable {
-    private String dealNumber;
+    private String deal_number;
     private int child;
     private int parent;
     private String label;
     private String book;
-    private Date dealDate;
-    private Date maturityDate;
-    private char maturityType;
-    private String dealType;
-    private String databaseName;
-    private String databaseServer;
+    private Date deal_date;
+    private Date maturity_date;
+    private char maturity_type;
+    private String deal_type;
+    private String database_name;
+    private String database_server;
 
     public String getDatabaseServer() {
-        return databaseServer;
+        return database_server;
     }
 
-    public void setDatabaseServer(final String databaseServer) {
-        this.databaseServer = databaseServer;
+    public void setDatabaseServer(final String database_server) {
+        this.database_server = database_server;
     }
 
     public String getDatabaseName() {
-        return databaseName;
+        return database_name;
     }
 
-    public void setDatabaseName(final String databaseName) {
-        this.databaseName = databaseName;
+    public void setDatabaseName(final String database_name) {
+        this.database_name = database_name;
     }
 
     public String getDealType() {
-        return dealType;
+        return deal_type;
     }
 
-    public void setDealType(final String dealType) {
-        this.dealType = dealType;
+    public void setDealType(final String deal_type) {
+        this.deal_type = deal_type;
     }
 
     public String getDealNumber() {
-        return dealNumber;
+        return deal_number;
     }
 
-    public void setDealNumber(final String dealNumber) {
-        this.dealNumber = dealNumber;
+    public void setDealNumber(final String deal_number) {
+        this.deal_number = deal_number;
     }
 
     public int getChild() {
@@ -102,19 +102,19 @@ public class TestDeal
     }
 
     public Date getDealDate() {
-        return dealDate;
+        return deal_date;
     }
 
-    public void setDealDate(final Date dealDate) {
-        this.dealDate = dealDate;
+    public void setDealDate(final Date deal_date) {
+        this.deal_date = deal_date;
     }
 
     public Date getMaturityDate() {
-        return maturityDate;
+        return maturity_date;
     }
 
-    public void setMaturityDate(final Date maturityDate) {
-        this.maturityDate = maturityDate;
+    public void setMaturityDate(final Date maturity_date) {
+        this.maturity_date = maturity_date;
     }
 
     @Override
@@ -127,11 +127,11 @@ public class TestDeal
     }
 
     public char getMaturityType() {
-        return maturityType;
+        return maturity_type;
     }
 
-    public void setMaturityType(final char maturityType) {
-        this.maturityType = maturityType;
+    public void setMaturityType(final char maturity_type) {
+        this.maturity_type = maturity_type;
     }
 
     @Override
@@ -145,18 +145,18 @@ public class TestDeal
 
         if (child != that.child)
             return false;
-        if (!databaseName.equals(that.databaseName))
+        if (!database_name.equals(that.database_name))
             return false;
-        return dealNumber.equals(that.dealNumber) && label.equals(that.label);
+        return deal_number.equals(that.deal_number) && label.equals(that.label);
 
     }
 
     @Override
     public int hashCode() {
-        int result = dealNumber.hashCode();
+        int result = deal_number.hashCode();
         result = 31 * result + child;
         result = 31 * result + label.hashCode();
-        result = 31 * result + databaseName.hashCode();
+        result = 31 * result + database_name.hashCode();
         return result;
     }
 }

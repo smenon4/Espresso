@@ -123,6 +123,9 @@ predicate returns [SqlExpressionNode lFactor]
     |   il1 = inList {
                 $lFactor = il1;
             }
+    |   nil1 = notinList {
+                $lFactor = nil1;
+            }
     |   l1 = like {
                 $lFactor = l1;
             }
@@ -151,7 +154,7 @@ between returns [SqlExpressionNode bw]
 
 inList returns [SqlExpressionNode inL]
     :   col = Identifier {
-                $inL = new SqlInExpression(new SqlColumn($col.text));
+                $inL = new SqlInExpression(new SqlColumn($col.text), false);
             }
         IN_
         '('
@@ -164,17 +167,53 @@ inList returns [SqlExpressionNode inL]
         )*
         ')'
     ;
+    
+notinList returns [SqlExpressionNode ninL]
+    :   col = Identifier {
+                $ninL = new SqlInExpression(new SqlColumn($col.text), true);
+            }
+            
+        NOT_
+        (LIKE_
+            '('
+        	{
+
+         		$ninL =  new SqlLikeExpression(true);
+         		((SqlExpression)$ninL).addOperand(new SqlColumn($col.text));
+         		
+              }
+              
+              str = String {
+                SqlString string = new SqlString($str.text);
+                ((SqlExpression)$ninL).addOperand(string);
+            }
+           ')'
+        )?
+        (IN_ 
+	        '('
+	        exp = expression {
+	                ((SqlExpression)$ninL).addOperand(exp);
+	            }
+	        ( ','   exp = expression {
+	                        ((SqlExpression)$ninL).addOperand(exp);
+	                    }
+	        )*
+	        ')'
+        )?
+    ;
 
 like returns [SqlExpressionNode lk]
     :   col = Identifier {
-                $lk = new SqlLikeExpression();
+                $lk = new SqlLikeExpression(false);
                 ((SqlExpression)$lk).addOperand(new SqlColumn($col.text));
             }
         LIKE_
+        '('
         str = String {
                 SqlString string = new SqlString($str.text);
                 ((SqlExpression)$lk).addOperand(string);
             }
+         ')'
     ;
 
 nullPredicate returns [SqlExpressionNode nullPred]

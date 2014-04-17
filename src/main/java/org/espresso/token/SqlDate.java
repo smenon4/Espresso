@@ -48,7 +48,7 @@ public class SqlDate<E> implements SqlExpressionNode<E> {
      * @return the column name
      */
     public String getDateString() {
-        return dateString.substring(1, dateString.length()-1);
+        return dateString.contains("'")? dateString.substring(1, dateString.length()-1) : dateString;
     }
 
     /**
@@ -67,7 +67,6 @@ public class SqlDate<E> implements SqlExpressionNode<E> {
      * @return the date object
      * @throws SQLException wraps all types of errors that may happen
      */
-    @Override
     public Object eval(final E row, final Map<String, FunctionExtension> functions) throws SQLException {
         if (null != convertedDate)
             return convertedDate;
@@ -89,7 +88,6 @@ public class SqlDate<E> implements SqlExpressionNode<E> {
      * to give the visitor a chance to push/pop state associated with recursion.
      * @param visitor the visitor to this class.
      */
-    @Override
     public void accept(final SqlNodeVisitor<E> visitor) throws SQLException {
         visitor.visit(this);
     }

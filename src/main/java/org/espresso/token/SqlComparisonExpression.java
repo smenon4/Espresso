@@ -20,12 +20,24 @@ import org.espresso.SqlNodeVisitor;
 import org.espresso.eval.SqlComparisonEvaluator;
 
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.Map;
 
 /**
  * Represents the possible comparisons (less than, greater than, etc.)
  *
  * @author <a href="mailto:antenangeli@yahoo.com">Alberto Antenangeli</a>
+ * 
+ * ### Change History ###
+ * 
+* @author      <a href="mailto:santosh.menon1@gmail.com">Santosh Menon</a>
+ * @version     1.0.3  
+ * @since       2014-04-10
+ * 
+ * Added functionality to convert date in different formats. 
+ * Convert expression to SqlDate<E> if left expression is Date and right expression is String
+ * 
+ * 
  */
 public class SqlComparisonExpression<E> extends SqlExpression<E> {
     private final SqlComparisonOperator operator;
@@ -45,11 +57,10 @@ public class SqlComparisonExpression<E> extends SqlExpression<E> {
         return operator.toString();
     }
 
-    @Override
     public Object eval(final E row, final Map<String, FunctionExtension> functions) throws SQLException {
         try {
             final Object left = operands.get(0).eval(row, functions);
-            final Object right = operands.get(1).eval(row, functions);
+            final Object right = rightExpression(row, functions, left);
             if (null == evaluator)
                 evaluator = SqlComparisonEvaluator.pickEvaluator(left, right);
             return operator.eval(evaluator.compare(left, right));
@@ -66,8 +77,19 @@ public class SqlComparisonExpression<E> extends SqlExpression<E> {
      *
      * @param visitor the visitor to this class
      */
-    @Override
     public void accept(final SqlNodeVisitor<E> visitor) throws SQLException {
         visitor.visit(this);
+    }
+    
+    private Object rightExpression(final E row, final Map<String, FunctionExtension> functions, final Object left) throws SQLException{
+    	Object right = operands.get(1).eval(row, functions);
+    	 if(!(left instanceof String) && right instanceof String){
+         	if(left instanceof Date)
+         		right = (new SqlDate<E>(right.toString())).eval(row, functions);
+         	else if (left instanceof Character){
+         		right = (new SqlCharacter<E>(right.toString())).eval(row, functions);
+         	}
+         }
+    	return right;
     }
 }

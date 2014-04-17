@@ -32,6 +32,7 @@ public abstract class SqlNodeVisitor<E> {
     public abstract void visit(final SqlNull<E> node) throws SQLException;
     public abstract void visit(final SqlNumber<E> node) throws SQLException;
     public abstract void visit(final SqlString<E> node) throws SQLException;
+    public abstract void visit(final SqlCharacter<E> node) throws SQLException;
 
 
     public void visit(final SqlArithmeticExpression<E> node) throws SQLException {

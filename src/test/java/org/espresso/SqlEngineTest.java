@@ -284,6 +284,13 @@ public class SqlEngineTest {
         assertThat(restrict("select * from EnrichedDeal where deal_number like 'HH_T%';", deal1, deal2, deal3),
                 is(equalTo(singleDeal(deal1))));
     }
+    
+    @Test
+    public void shouldIncludeNotByLike()
+            throws SQLException {
+        assertThat(restrict("select * from EnrichedDeal where deal_number not like 'HH_%';", deal1, deal2, deal3),
+                is(equalTo(singleDeal(deal3))));
+    }
 
     @Test
     public void shouldExcludeByLike()
@@ -303,6 +310,13 @@ public class SqlEngineTest {
     public void shouldIncludeWithInList()
             throws SQLException {
         assertThat(restrict("select * from EnrichedDeal where child in (2, 3, 4, 5);", deal1, deal2, deal3),
+                is(equalTo(singleDeal(deal2))));
+    }
+    
+    @Test
+    public void shouldIncludeWithNotInList()
+            throws SQLException {
+        assertThat(restrict("select * from EnrichedDeal where child not in (1, 3, 4, 5);", deal1, deal2, deal3),
                 is(equalTo(singleDeal(deal2))));
     }
 

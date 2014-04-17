@@ -31,6 +31,16 @@ import static java.util.regex.Pattern.compile;
  * Represents the SQL clause column LIKE pattern.
  *
  * @author <a href="mailto:antenangeli@yahoo.com">Alberto Antenangeli</a>
+ * 
+ *   ### Change History ###
+ * 
+ * @author      <a href="mailto:santosh.menon1@gmail.com">Santosh Menon</a>
+ * @version     1.0.3  
+ * @since       2014-04-10
+ * 
+ * -- Added support for NOT LIKE  operator
+ * -- Handle LIKE if operand inside parentheses such as => counterparty LIKE ('AB%')
+ * 
  */
 public class SqlLikeExpression<E> extends SqlExpression<E> {
     private static final Pattern PERCENT = Pattern.compile("%");
@@ -38,10 +48,16 @@ public class SqlLikeExpression<E> extends SqlExpression<E> {
     private static final String META = "!$()*+.<>?[\\]^{|}";
 
     private Pattern compiledPattern = null;
+    private final boolean isNot;
+    
 
-    @Override
+    public SqlLikeExpression(final boolean isNot) {
+		this.isNot = isNot;
+	}
+
+	@Override
     public String getOperator() {
-        return "LIKE";
+        return isNot ? "NOT LIKE" : "LIKE";
     }
 
     @Override
@@ -49,7 +65,7 @@ public class SqlLikeExpression<E> extends SqlExpression<E> {
         try {
             final String left = (String) operands.get(0).eval(row, functions);
             final String right = (String) operands.get(1).eval(row, functions);
-            return matches(left, right);
+            return isNot ? !matches(left, right) : matches(left, right);
         } catch (ClassCastException e) {
             throw new SQLException("LIKE requires a string expression");
         } catch (final IndexOutOfBoundsException e) {

@@ -15,19 +15,19 @@
  */
 package org.espresso.token;
 
-import org.espresso.FunctionExtension;
-import org.espresso.SqlNodeVisitor;
-import org.espresso.eval.NumberNormalizer;
-import org.espresso.eval.NumberWrapper;
-import org.espresso.eval.NumberWrapperSetter;
+import static java.lang.Character.toLowerCase;
+import static java.lang.Character.toUpperCase;
 
 import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static java.lang.Character.toLowerCase;
-import static java.lang.Character.toUpperCase;
+import org.espresso.FunctionExtension;
+import org.espresso.SqlNodeVisitor;
+import org.espresso.eval.NumberNormalizer;
+import org.espresso.eval.NumberWrapper;
+import org.espresso.eval.NumberWrapperSetter;
 
 /**
  * Represents a database column, which, in turn, is associated witha field.
@@ -128,12 +128,13 @@ public class SqlColumn<E> implements SqlExpressionNode<E>, NumberWrapperSetter {
         }
         Field field = fields.get(name);
         if (null == field) {
-            final String fieldName = convertToCamelBackGetter("", name);
+      //   	Removing this conversion, we want to keep the field names in object the same as the query
+      //  	final String fieldName = convertToCamelBackGetter("", name);
             try {
-                field = clazz.getDeclaredField(fieldName);
+                field = clazz.getDeclaredField(name);
                 fields.put(name, field);
             } catch (final NoSuchFieldException e) {
-                throw new SQLException("Could not find field: " + fieldName, e); 
+                throw new SQLException("Could not find field: " + name, e); 
             }
         }
         return field;

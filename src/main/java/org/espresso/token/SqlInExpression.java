@@ -28,12 +28,24 @@ import java.util.Set;
  * Representation of a SQL "in" predicate - column IN (option1, option2, ...)
  *
  * @author <a href="mailto:antenangeli@yahoo.com">Alberto Antenangeli</a>
+ * 
+ *  * ### Change History ###
+ * 
+ * @author      <a href="mailto:santosh.menon1@gmail.com">Santosh Menon</a>
+ * @version     1.0.3  
+ * @since       2014-04-10
+ * 
+ * -- Added support for NOT IN  operator
+ * 
  */
 public class SqlInExpression<E>
         extends SqlExpression<E> {
     private final SqlColumn column;
+    private final boolean isNot;
     private Set inList = null;
     public final static String IN_OPERATOR = "IN";
+    public final static String NOT_IN_OPERATOR = "NOT IN";
+    private String operator;
 
     /**
      * Builds an in expression
@@ -42,10 +54,12 @@ public class SqlInExpression<E>
      *
      * @throws IllegalArgumentException if a null column is supplied
      */
-    public SqlInExpression(final SqlColumn column) {
+    public SqlInExpression(final SqlColumn column,final boolean isNot) {
         if (null == column)
             throw new IllegalArgumentException("In: column cannot be null");
         this.column = column;
+        this.isNot = isNot;
+        this.operator = isNot ? NOT_IN_OPERATOR : IN_OPERATOR ;
     }
 
     /**
@@ -59,7 +73,7 @@ public class SqlInExpression<E>
 
     @Override
     public String getOperator() {
-        return IN_OPERATOR;
+        return operator;
     }
 
     /**
@@ -70,7 +84,7 @@ public class SqlInExpression<E>
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder("(");
-        builder.append(column.toString()).append(" " + IN_OPERATOR + " (");
+        builder.append(column.toString()).append(" " + operator + " (");
         final Iterator<SqlExpressionNode> iterator = operands.iterator();
         if (iterator.hasNext())
             builder.append(iterator.next().toString());
@@ -98,7 +112,8 @@ public class SqlInExpression<E>
             for (SqlExpressionNode element : operands)
                 inList.add(element.eval(row, functions));
         }
-        return inList.contains(column.eval(row, functions));
+        boolean evalResult = inList.contains(column.eval(row, functions));
+		return isNot ? !evalResult : evalResult;
     }
 
 
